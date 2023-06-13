@@ -1,4 +1,4 @@
-per_gpu_train_batch_size : 256
+per_gpu_train_batch_size : 54
 # 112: vit 79G 
 # 256: rn101 79G
 per_gpu_eval_batch_size : 64 # not used in CLIP training
@@ -21,4 +21,4 @@ optimizer:
     weight_decay: 0.1
   type: AdamW
 
-wandb: False
+wandb: True

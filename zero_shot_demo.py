@@ -7,7 +7,8 @@ from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize
 from model import KoCLIP
 
-from utils.util import set_seed, mkdir, setup_logger, load_config_file
+from utils.util import set_seed, mkdir, load_config_file
+from utils.logger import setup_logger
 
 import argparse
 from tqdm import tqdm
@@ -56,7 +57,7 @@ def predict_class(model, images, image_names, dataset_classes, tokenizer, device
         classnames = [classname for classname in dataset_classes]
         if args.template_version=='v1':
             templates = ["이것은 {}이다."] #v1
-        elif args.template_version=='v2'
+        elif args.template_version=='v2':
             templates = ["이것은 {}의 사진이다."] #v2
         templates = ["이것은 {}이다."]
         zeroshot_weights = zeroshot_classifier(model, classnames, templates, tokenizer, device)
@@ -69,7 +70,7 @@ def predict_class(model, images, image_names, dataset_classes, tokenizer, device
             similarity = (similarity_scale * image_features @ zeroshot_weights).softmax(dim=-1)
             
             # top 5 predictions
-            values, indices = similarity[0].cpu().topk(5)
+            values, indices = similarity.cpu().topk(5)
             print("------------------------")
             print("img : ", image_name)
             print("predicted classes :")
@@ -141,11 +142,12 @@ def show_predictions(images, predictions, dataset_classes, save_dir):
 
 def zero_shot_demo():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--checkpoint_path", default=None, type=str, required=True, help="path of saved weights")
-    parser.add_argument("--img_dir", default="test_images", type=str, required=False, help="directory containing test images. Please have even number of images for a nice demo figure")
-    parser.add_argument("--img_path", default=None, type=str, required=False, help="Path of an image to classify")
+    parser.add_argument("--checkpoint_path", default='./saved_checkpoints/new_plm_rn101/checkpoint_32_33_2023-06-13 22:28:38.100069.pt', type=str, help="path of saved weights")
+    parser.add_argument("--img_dir", default="/nfs_shared/dataset/sketch/temp/train2014/", type=str, required=False, help="directory containing test images. Please have even number of images for a nice demo figure")
+    parser.add_argument("--img_path", default="/nfs_shared/dataset/sketch/temp/train2014/COCO_train2014_000000581921.jpg", type=str, required=False, help="Path of an image to classify")
     parser.add_argument("--show_predictions", action='store_true', help="To show predictions in a figure")
-    parser.add_argument("--pvm", default='google/vit-large-patch16-224')
+    # parser.add_argument("--pvm", default='google/vit-large-patch16-224')
+    parser.add_argument("--pvm", default='RN101')
     parser.add_argument("--template_version", default='v1', type=str, help="set the template")
     args = parser.parse_args()
 

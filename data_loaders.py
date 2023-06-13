@@ -2,6 +2,8 @@ from torch.utils.data import Dataset, DataLoader, RandomSampler, SequentialSampl
 
 from PIL import Image
 from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize
+from transformers import BertTokenizer
+from utils.util import read_json
 import os
 import random
 

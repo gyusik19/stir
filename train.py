@@ -8,13 +8,15 @@ from data_loaders import KoCLIP_CUSTOM_dataset, get_dataloader
 
 from model import KoCLIP
 from utils.custom_schedulers import get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
-from utils.util import set_seed, mkdir, setup_logger, load_config_file
+from utils.util import set_seed, mkdir, load_config_file
+from utils.logger import setup_logger
 
 from torch.optim import AdamW
 
 import argparse
 import wandb
 import datetime
+from tqdm import tqdm
 
 DATA_CONFIG_PATH = 'config_data.yaml'
 TRAINER_CONFIG_PATH = 'config_train.yaml'
@@ -61,7 +63,7 @@ def train(config, train_dataset, valid_dataset, model):
     for epoch in range(int(config.num_train_epochs)):
         train_img_acc = 0.0
         model.train()
-        for step, batch in enumerate(train_dataloader):
+        for step, batch in enumerate(tqdm(train_dataloader)):
             input_images, input_texts = batch
 
             input_images = input_images.to(torch.device(config.device))
@@ -126,7 +128,7 @@ def train(config, train_dataset, valid_dataset, model):
         with torch.no_grad():
             model.eval()
             val_img_acc = 0.0
-            for final_step, batch in enumerate(valid_dataloader):
+            for final_step, batch in enumerate(tqdm(valid_dataloader)):
                 input_images, input_texts = batch
                 input_images = input_images.to(torch.device(config.device))
 
@@ -148,7 +150,7 @@ def train(config, train_dataset, valid_dataset, model):
 
                 labels = torch.arange(len(logits_per_image)).to(logits_per_image.device)
                 
-                val_img_acc += (logits_per_image.argmax()==labels)
+                val_img_acc += (logits_per_image.argmax()==labels).sum()
 
                 image_loss = F.cross_entropy(logits_per_image, labels)
                 text_loss  = F.cross_entropy(logits_per_text, labels)
@@ -206,7 +208,7 @@ def main():
 
     config = OmegaConf.merge(train_config, data_config)
     if config.wandb:
-        wandb.init(project="koclip", entity="dongin1009", config=config)
+        wandb.init(project="koclip", entity="gyusik19", config=config)
     # merging cli arguments, if data path given in cli args use those
     if args.train_coco_img_dir : 
         config.train_coco_img_dir = args.train_coco_img_dir
@@ -234,14 +236,14 @@ def main():
     logger.info(f"Training/evaluation parameters {train_config}")
 
     # getting dataset for training
-    train_dataset = CLIP_CUSTOM_dataset(config.train_coco_annotation_file, config.train_coco_img_dir)
+    train_dataset = KoCLIP_CUSTOM_dataset(config.train_coco_annotation_file, config.train_coco_img_dir)
     if config.vizwiz:
-        vizwiz_train = CLIP_CUSTOM_dataset(config.train_vizwiz_annotation_file, config.train_vizwiz_img_dir, img_type='vizwiz')
-        vizwiz_valid = CLIP_CUSTOM_dataset(config.valid_vizwiz_annotation_file, config.valid_vizwiz_img_dir, img_type='vizwiz')
+        vizwiz_train = KoCLIP_CUSTOM_dataset(config.train_vizwiz_annotation_file, config.train_vizwiz_img_dir, img_type='vizwiz')
+        vizwiz_valid = KoCLIP_CUSTOM_dataset(config.valid_vizwiz_annotation_file, config.valid_vizwiz_img_dir, img_type='vizwiz')
         train_dataset = train_dataset.__add__(vizwiz_train)
         train_dataset = train_dataset.__add__(vizwiz_valid)
     
-    valid_dataset = CLIP_CUSTOM_dataset(config.valid_coco_annotation_file, config.valid_coco_img_dir)
+    valid_dataset = KoCLIP_CUSTOM_dataset(config.valid_coco_annotation_file, config.valid_coco_img_dir)
 
     # Now training
     global_step, avg_loss = train(config, train_dataset, valid_dataset, model)

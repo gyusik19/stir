@@ -11,7 +11,10 @@ class KoCLIP(nn.Module):
         self.pvm = pvm
         if self.pvm=='RN101':
             self.visual_model = torchvision.models.resnet101(pretrained=True)
-            final_dim = 1000
+            modules = list(self.visual_model.children())[:-1]
+            self.visual_model = nn.Sequential(*modules)
+            # final_dim = 1000
+            final_dim = 2048
         else:
             self.visual_model = AutoModel.from_pretrained(self.pvm)
             final_dim = self.visual_model.config.hidden_size
@@ -25,7 +28,7 @@ class KoCLIP(nn.Module):
             x = self.visual_model(image)
         else:
             x = self.visual_model(image).pooler_output
-        x = self.image_projection(x)
+        x = self.image_projection(x.squeeze())
         return x
 
     def encode_text(self, text: Dict):
