@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ko-CLIP
 This repository contains code to train Korean [CLIP](https://github.com/openai/CLIP) on [MS-COCO](https://cocodataset.org/#home) with Korean annotations in [AI-HUB](https://aihub.or.kr/keti_data_board/visual_intelligence). Additionally, to get more Korean annotations, we use [Naver Papago translator](https://papago.naver.com/) from English to Korean on [VizWiz](https://vizwiz.org/tasks-and-datasets/image-captioning/) data.
 
@@ -17,3 +18,6 @@ See [WandB dashboard](https://wandb.ai/dongin1009/koclip?workspace=user-dongin10
 In zero-shot classification, we predict on CIFAR-10 and CIFAR-100 datasets.
 
 We refer to [CLIP](https://github.com/openai/CLIP), [clip-training](https://github.com/revantteotia/clip-training) for train, [koclip](https://github.com/jaketae/koclip) idea, and other pretrained models.
+=======
+# stir
+>>>>>>> 6faed296d680da71f52a712eafb8cc132fbe07cf
