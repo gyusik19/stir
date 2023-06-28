@@ -4,14 +4,14 @@ per_gpu_train_batch_size : 54
 per_gpu_eval_batch_size : 64 # not used in CLIP training
 n_gpu : 1
 num_workers : 0
-num_train_epochs : 33 # number of epochs to train
+num_train_epochs : 100 # number of epochs to train
 
 gradient_accumulation_steps : 1 # Number of updates steps to accumulate before backward
 
 logging_steps : 50 #  log every this steps
 save_steps : 1000
 
-saved_checkpoints : saved_checkpoints/new_plm_rn101
+saved_checkpoints : saved_checkpoints/new_plm_rn101_fc
 logs : logs
 
 optimizer:

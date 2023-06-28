@@ -142,9 +142,9 @@ def show_predictions(images, predictions, dataset_classes, save_dir):
 
 def zero_shot_demo():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--checkpoint_path", default='./saved_checkpoints/new_plm_rn101/checkpoint_32_33_2023-06-13 22:28:38.100069.pt', type=str, help="path of saved weights")
-    parser.add_argument("--img_dir", default="/nfs_shared/dataset/sketch/temp/train2014/", type=str, required=False, help="directory containing test images. Please have even number of images for a nice demo figure")
-    parser.add_argument("--img_path", default="/nfs_shared/dataset/sketch/temp/train2014/COCO_train2014_000000581921.jpg", type=str, required=False, help="Path of an image to classify")
+    parser.add_argument("--checkpoint_path", default='./saved_checkpoints/new_plm_rn101/checkpoint_29_23000_2023-06-14 18:02:43.739880.pt', type=str, help="path of saved weights")
+    parser.add_argument("--img_dir", default="./test_images/", type=str, required=False, help="directory containing test images. Please have even number of images for a nice demo figure")
+    parser.add_argument("--img_path", default="", type=str, required=False, help="Path of an image to classify")
     parser.add_argument("--show_predictions", action='store_true', help="To show predictions in a figure")
     # parser.add_argument("--pvm", default='google/vit-large-patch16-224')
     parser.add_argument("--pvm", default='RN101')
